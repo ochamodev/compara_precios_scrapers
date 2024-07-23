@@ -1,0 +1,32 @@
+{
+  "name": "scrapers",
+  "version": "1.0.0",
+  "description": "A project containing all the scrapers bot of the websites we are gonna scan",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ochamodev/compara_precios_scrapers.git"
+  },
+  "keywords": [
+    "scraping",
+    "prices"
+  ],
+  "author": "Otto Chamo",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ochamodev/compara_precios_scrapers/issues"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.9",
+    "ts-node": "^10.9.2"
+  },
+  "dependencies": {
+    "async-retry": "1.3.3",
+    "playwright": "1.45.1",
+    "typescript": "5.5.3"
+  },
+  "homepage": "https://github.com/ochamodev/compara_precios_scrapers#readme"
+}
