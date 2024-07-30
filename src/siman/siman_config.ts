@@ -13,6 +13,11 @@ export interface SimanConfig {
     noMoreItemsText: string;
     itemsAproxPerPage: number;
     addToCartButtonText: string;
+    productImgUrl: string;
+    showMoreBtnClass: string;
+    sellingPriceValueClass: string;
+    listPriceValueClass: string;
+    specificationListClass: string;
 }
 
 export const config: SimanConfig = {
@@ -24,5 +29,10 @@ export const config: SimanConfig = {
     productLinkSelector: "a",
     noMoreItemsClass: ".lh-copy",
     noMoreItemsText: "No pudimos encontrar lo que estabas buscando",
-    itemsAproxPerPage: 20
+    itemsAproxPerPage: 20,
+    productImgUrl: ".vtex-store-components-3-x-productImageTag",
+    showMoreBtnClass: ".siman-m3-custom-1-x-showMore",
+    sellingPriceValueClass: ".vtex-product-price-1-x-sellingPrice",
+    listPriceValueClass: '.vtex-product-price-1-x-listPriceValue',
+    specificationListClass: '.siman-m3-custom-1-x-specificationList'
 };
