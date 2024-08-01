@@ -3,6 +3,8 @@ import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { ProductModel } from "../common/core";
 import { printProduct } from "../common/utils/scraping_utils";
 import { config } from "./config";
+import { Page } from "playwright";
+import { url } from "inspector";
 
 export class KemikScraper {
   constructor() {
@@ -25,12 +27,29 @@ export class KemikScraper {
       `${config.base_url}${config.category_sub_path}${config.category_paths[0]}`
     );
 
-    // Perform scraping actions here
-    // For example, extract the title of the page
-    const title = await page.title();
-    console.log(`Page title: ${title}`);
+    const detailURLs = await this.extractDetailURL(page);
 
     // Close the browser
     await browser.close();
   }
+
+  private async extractDetailURL(page: Page): Promise<string[]> {
+    return await page
+      .$$eval(config.product_item_selector, (elements) => {
+        return elements.map((element) => {
+          const newElement = element as unknown as HTMLHyperlinkElementUtils;
+          return newElement.href;
+        });
+      })
+      .then((urls) => {
+        console.log("Detail URLs", urls);
+        return urls;
+      })
+      .catch((err) => {
+        console.log("Error extracting detail URLs", err);
+        return [];
+      });
+  }
+
+  private async extractProductData(page: any) {}
 }
