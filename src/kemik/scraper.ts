@@ -16,12 +16,14 @@ export class KemikScraper {
     chromium.use(StealthPlugin());
 
     // Launch the browser
-    const browser = await chromium.launch({ headless: false });
+    const browser = await chromium.launch({ headless: true });
     const context = await browser.newContext();
     const page = await context.newPage();
 
     // Navigate to the target URL
-    await page.goto(config.base_url);
+    await page.goto(
+      `${config.base_url}${config.category_sub_path}${config.category_paths[0]}`
+    );
 
     // Perform scraping actions here
     // For example, extract the title of the page
