@@ -71,18 +71,18 @@ export class KemikScraper {
         let currentPriceFloat = 0;
         let salePriceFloat = 0;
         const currentPriceElement = document.querySelector(currentPriceSelector);
-        const salePriceElement = document.querySelector(salePriceSelector);
+        const salePriceElement = document.querySelector(salePriceSelector)?.querySelector("div");
         const salePriceCentsElement = document.querySelector(salePriceCentsSelector);
 
         if (currentPriceElement) {
           const currentPriceString = currentPriceElement?.textContent;
           currentPriceFloat = currentPriceString ? parseFloat(currentPriceString.replace(priceRegex, "")) : 0;
-          const salePriceString = salePriceElement?.querySelector("div")?.textContent;
+          const salePriceString = salePriceElement?.textContent;
           const salePriceCentsString = salePriceCentsElement?.textContent;
           const finalSalePriceString = `${salePriceString}.${salePriceCentsString}`;
           salePriceFloat = finalSalePriceString ? parseFloat(finalSalePriceString.replace(priceRegex, "")) : 0;
         } else {
-          const currentPriceString = salePriceElement?.querySelector("div")?.textContent;
+          const currentPriceString = salePriceElement?.textContent;
           const currentPriceCentsString = salePriceCentsElement?.textContent;
           const finalCurrentPriceString = `${currentPriceString}.${currentPriceCentsString}`;
           currentPriceFloat = finalCurrentPriceString ? parseFloat(finalCurrentPriceString.replace(priceRegex, "")) : 0;
