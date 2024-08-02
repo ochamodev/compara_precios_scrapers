@@ -4,7 +4,6 @@ import { ProductModel } from "../common/core";
 import { printProduct } from "../common/utils/scraping_utils";
 import { config } from "./config";
 import { Page } from "playwright";
-import { url } from "inspector";
 
 export class KemikScraper {
   private category: string;
