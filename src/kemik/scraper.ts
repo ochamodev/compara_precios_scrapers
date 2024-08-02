@@ -67,12 +67,27 @@ export class KemikScraper {
         const brand = document.querySelector(brandSlector)?.querySelector("span")?.textContent;
         const image = document.querySelector(imageSelector)?.querySelector("img")?.getAttribute("src");
         const sku = document.querySelector(skuSelector)?.textContent;
-        const currentPriceString = document.querySelector(currentPriceSelector)?.textContent;
-        const currentPriceFloat = currentPriceString ? parseFloat(currentPriceString.replace(priceRegex, "")) : 0;
-        const salePriceString = document.querySelector(salePriceSelector)?.querySelector("div")?.textContent;
-        const salePriceCentsString = document.querySelector(salePriceCentsSelector)?.textContent;
-        const finalSalePriceString = `${salePriceString}.${salePriceCentsString}`;
-        const salePriceFloat = finalSalePriceString ? parseFloat(finalSalePriceString.replace(priceRegex, "")) : 0;
+
+        let currentPriceFloat = 0;
+        let salePriceFloat = 0;
+        const currentPriceElement = document.querySelector(currentPriceSelector);
+        const salePriceElement = document.querySelector(salePriceSelector);
+        const salePriceCentsElement = document.querySelector(salePriceCentsSelector);
+
+        if (currentPriceElement) {
+          const currentPriceString = currentPriceElement?.textContent;
+          currentPriceFloat = currentPriceString ? parseFloat(currentPriceString.replace(priceRegex, "")) : 0;
+          const salePriceString = salePriceElement?.querySelector("div")?.textContent;
+          const salePriceCentsString = salePriceCentsElement?.textContent;
+          const finalSalePriceString = `${salePriceString}.${salePriceCentsString}`;
+          salePriceFloat = finalSalePriceString ? parseFloat(finalSalePriceString.replace(priceRegex, "")) : 0;
+        } else {
+          const currentPriceString = salePriceElement?.querySelector("div")?.textContent;
+          const currentPriceCentsString = salePriceCentsElement?.textContent;
+          const finalCurrentPriceString = `${currentPriceString}.${currentPriceCentsString}`;
+          currentPriceFloat = finalCurrentPriceString ? parseFloat(finalCurrentPriceString.replace(priceRegex, "")) : 0;
+          salePriceFloat = currentPriceFloat;
+        }
 
         return {
           name: name ?? "",
