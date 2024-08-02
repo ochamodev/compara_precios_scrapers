@@ -2,6 +2,8 @@ import { KemikScraper } from "./scraper";
 import { config } from "./config";
 
 (async () => {
-  const scraper = new KemikScraper(config.category_paths[0]);
-  await scraper.scrape();
+  config.category_paths.forEach(async (category) => {
+    const scraper = new KemikScraper(category);
+    await scraper.scrape();
+  });
 })();
