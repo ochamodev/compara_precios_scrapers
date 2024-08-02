@@ -62,16 +62,17 @@ export class KemikScraper {
           salePriceCentsSelector
         } = data.selectors;
 
+        const priceRegex = /[^0-9.-]+/g;
         const name = document.querySelector(modelSelector)?.textContent;
         const brand = document.querySelector(brandSlector)?.querySelector("span")?.textContent;
         const image = document.querySelector(imageSelector)?.querySelector("img")?.getAttribute("src");
         const sku = document.querySelector(skuSelector)?.textContent;
         const currentPriceString = document.querySelector(currentPriceSelector)?.textContent;
-        const currentPriceFloat = currentPriceString ? parseFloat(currentPriceString.replace(/[^0-9.-]+/g, "")) : null;
+        const currentPriceFloat = currentPriceString ? parseFloat(currentPriceString.replace(priceRegex, "")) : 0;
         const salePriceString = document.querySelector(salePriceSelector)?.querySelector("div")?.textContent;
         const salePriceCentsString = document.querySelector(salePriceCentsSelector)?.textContent;
         const finalSalePriceString = `${salePriceString}.${salePriceCentsString}`;
-        const salePriceFloat = finalSalePriceString ? parseFloat(finalSalePriceString.replace(/[^0-9.-]+/g, "")) : null;
+        const salePriceFloat = finalSalePriceString ? parseFloat(finalSalePriceString.replace(priceRegex, "")) : 0;
 
         return {
           name: name ?? "",
