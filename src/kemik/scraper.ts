@@ -28,7 +28,7 @@ export class KemikScraper {
     const productDetailURLs = await this.extractDetailURL(page);
 
     // Extract the product details
-    for (const productDetailPage of productDetailURLs.slice(0, 5)) {
+    for (const productDetailPage of productDetailURLs) {
       await page.goto(productDetailPage, { waitUntil: "networkidle" });
       const product = await this.extractProductData(page, productDetailPage);
       printProduct(product);
