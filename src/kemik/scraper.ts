@@ -22,12 +22,12 @@ export class KemikScraper {
     const page = await context.newPage();
 
     // Navigate to the target URL
-    await page.goto(
-      `${config.base_url}${config.category_sub_path}${this.category}`
-    );
+    await page.goto(`${config.base_url}${config.category_sub_path}${this.category}`);
 
+    // Extract the product detail URLs
     const productDetailURLs = await this.extractDetailURL(page);
 
+    // Extract the product details
     for (const productDetailPage of productDetailURLs.slice(0, 5)) {
       await page.goto(productDetailPage, { waitUntil: "networkidle" });
       const product = await this.extractProductData(page, productDetailPage);
