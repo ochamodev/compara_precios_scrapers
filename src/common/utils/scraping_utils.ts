@@ -1,10 +1,13 @@
 import { ProductModel } from "../core";
 
 export function printProduct(product: ProductModel) {
-    console.log('------- Product Data -------')
-    console.log(`Product Name: ${product.name}`);
-    console.log(`Product Link: ${product.productDetailUrl}`);
-    console.log(`Product Brand: ${product.brandName}`);
-    console.log(`Product Sku: ${product.storeSku}`);
-    console.log('----------------------------')
+  console.log(`------- product data -------
+name: ${product.name}
+link: ${product.productDetailUrl}
+brand: ${product.brandName}
+SKU: ${product.storeSku}
+image: ${product.productImageUrl}
+current-price: ${product.currentPrice}
+sale-price: ${product.salePrice}
+----------------------------`);
 }

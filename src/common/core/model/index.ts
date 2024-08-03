@@ -1,2 +1,1 @@
-
-export * from './product_model';
+export * from "./product_model";
