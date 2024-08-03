@@ -40,6 +40,8 @@ export class SimanScraper {
 
                 if (isListEmpty) {
                     break;
+                } else {
+                    console.log(`Finished reading products from ${category}`);
                 }
 
                 await page.waitForSelector(config.productContainerClass);
@@ -132,7 +134,7 @@ export class SimanScraper {
                 pageNum++;
             }
         }
-        
+        console.log("Finished execution");
     }
 
     async isProductListEmpty(page: Page): Promise<boolean>{
