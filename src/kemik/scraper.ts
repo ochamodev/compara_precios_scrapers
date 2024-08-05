@@ -40,7 +40,7 @@ export class KemikScraper {
 
   private async extractDetailURL(page: Page): Promise<string[]> {
     return await page
-      .$$eval(config.grid_product_item_selector, (elements) => {
+      .$$eval(config.grid_product_item_selector_class, (elements) => {
         return elements.map((element) => {
           const newElement = element as unknown as HTMLHyperlinkElementUtils;
           return newElement.href;
@@ -53,40 +53,40 @@ export class KemikScraper {
     return await page.evaluate(
       (data) => {
         const {
-          brandSlector,
-          imageSelector,
-          modelSelector,
-          skuSelector,
-          currentPriceSelector,
-          salePriceSelector,
-          salePriceCentsSelector
+          brandSelectorClass,
+          imageSelectorClass,
+          modelSelectorClass,
+          skuSelectorClass,
+          currentPriceSelectorClass,
+          salePriceSelectorClass,
+          salePriceCentsSelectorClass
         } = data.selectors;
 
         const priceRegex = /[^0-9.-]+/g;
-        const name = document.querySelector(modelSelector)?.textContent;
-        const brand = document.querySelector(brandSlector)?.querySelector("span")?.textContent;
-        const image = document.querySelector(imageSelector)?.querySelector("img")?.getAttribute("src");
-        const sku = document.querySelector(skuSelector)?.textContent;
+        const name = document.querySelector(modelSelectorClass)?.textContent;
+        const brand = document.querySelector(brandSelectorClass)?.querySelector("span")?.textContent;
+        const image = document.querySelector(imageSelectorClass)?.querySelector("img")?.getAttribute("src");
+        const sku = document.querySelector(skuSelectorClass)?.textContent;
 
-        let currentPriceFloat = 0;
-        let salePriceFloat = 0;
-        const currentPriceElement = document.querySelector(currentPriceSelector);
-        const salePriceElement = document.querySelector(salePriceSelector)?.querySelector("div");
-        const salePriceCentsElement = document.querySelector(salePriceCentsSelector);
+        let currentPrice = 0;
+        let salePrice: number | null = null;
+        const currentPriceElement = document.querySelector(currentPriceSelectorClass);
+        const salePriceElement = document.querySelector(salePriceSelectorClass)?.querySelector("div");
+        const salePriceCentsElement = document.querySelector(salePriceCentsSelectorClass);
 
         if (currentPriceElement) {
           const currentPriceString = currentPriceElement?.textContent;
-          currentPriceFloat = currentPriceString ? parseFloat(currentPriceString.replace(priceRegex, "")) : 0;
+          currentPrice = currentPriceString ? parseFloat(currentPriceString.replace(priceRegex, "")) : 0;
           const salePriceString = salePriceElement?.textContent;
           const salePriceCentsString = salePriceCentsElement?.textContent;
           const finalSalePriceString = `${salePriceString}.${salePriceCentsString}`;
-          salePriceFloat = finalSalePriceString ? parseFloat(finalSalePriceString.replace(priceRegex, "")) : 0;
+          salePrice = finalSalePriceString ? parseFloat(finalSalePriceString.replace(priceRegex, "")) : 0;
         } else {
           const currentPriceString = salePriceElement?.textContent;
           const currentPriceCentsString = salePriceCentsElement?.textContent;
           const finalCurrentPriceString = `${currentPriceString}.${currentPriceCentsString}`;
-          currentPriceFloat = finalCurrentPriceString ? parseFloat(finalCurrentPriceString.replace(priceRegex, "")) : 0;
-          salePriceFloat = currentPriceFloat;
+          currentPrice = finalCurrentPriceString ? parseFloat(finalCurrentPriceString.replace(priceRegex, "")) : 0;
+          salePrice = null;
         }
 
         return {
@@ -96,19 +96,19 @@ export class KemikScraper {
           productImageUrl: image ?? "",
           productModel: name ?? "",
           storeSku: sku?.split("SKU: ")[1] ?? "",
-          currentPrice: currentPriceFloat,
-          salePrice: salePriceFloat,
+          currentPrice: currentPrice,
+          salePrice: salePrice,
         };
       },
       {
         selectors: {
-          brandSlector: config.product_detail_brand_selector,
-          imageSelector: config.product_detail_image_selector,
-          modelSelector: config.product_detail_name_selector,
-          skuSelector: config.product_detail_sku_selector,
-          currentPriceSelector: config.product_detail_price_selector,
-          salePriceSelector: config.product_detail_sale_price_selector,
-          salePriceCentsSelector: config.product_detail_sale_price_cents_selector,
+          brandSelectorClass: config.product_detail_brand_selector_class,
+          imageSelectorClass: config.product_detail_image_selector_class,
+          modelSelectorClass: config.product_detail_name_selector_class,
+          skuSelectorClass: config.product_detail_sku_selector_class,
+          currentPriceSelectorClass: config.product_detail_price_selector_class,
+          salePriceSelectorClass: config.product_detail_sale_price_selector_class,
+          salePriceCentsSelectorClass: config.product_detail_sale_price_cents_selector_class,
         },
         productUrl: productUrl
       }
