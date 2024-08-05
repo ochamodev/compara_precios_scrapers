@@ -10,6 +10,7 @@ export interface KemikConfig {
   product_detail_sale_price_selector_class: string;
   product_detail_sale_price_cents_selector_class: string;
   product_detail_sku_selector_class: string;
+  pagination_button_selector_class: string;
 }
 
 export const config: KemikConfig = {
@@ -24,4 +25,5 @@ export const config: KemikConfig = {
   product_detail_sale_price_selector_class: ".price_price__a8YAx > .price_price__xQt90",
   product_detail_sale_price_cents_selector_class: ".price_price__xQt90 > .price_cents__QWFgU",
   product_detail_sku_selector_class: ".product-page_public-sku__sbQqe",
+  pagination_button_selector_class: ".pagination_button__ja0d6"
 };
