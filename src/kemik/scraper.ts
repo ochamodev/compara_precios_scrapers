@@ -7,7 +7,6 @@ import { Page } from "playwright";
 
 export class KemikScraper {
   private category: string;
-  private pageNumber: number = 1;
 
   constructor(category: string) {
     this.category = category;
@@ -24,35 +23,34 @@ export class KemikScraper {
     let productDetailURLs: string[] = [];
 
     // Navigate to the target URL
-    await page.goto(
-      `${config.base_url}${config.category_sub_path}${this.category}`
-    );
+    await page.goto(`${config.base_url}${config.category_sub_path}${this.category}`);
 
     // Get the number of pages (pagination)
+    let pageNumber: number = 1;
     const totalPages = await this.getTotalPages(page);
 
-    while (this.pageNumber <= totalPages) {
-      if (this.pageNumber > 1) {
-        await page.goto(`${config.base_url}${config.category_sub_path}${this.category}?page=${this.pageNumber}`);
+    while (pageNumber <= totalPages) {
+      if (pageNumber > 1) {
+        await page.goto(`${config.base_url}${config.category_sub_path}${this.category}?page=${pageNumber}`);
       }
 
       // Extract the product detail URLs
       const newProductDetailURLs = await this.extractDetailURL(page);
       productDetailURLs.push(...newProductDetailURLs);
 
-      this.pageNumber++;
+      pageNumber++;
     }
 
     // Extract the product details
     for (const productDetailPage of productDetailURLs) {
-      console.log(`Extracting product details from: ${productDetailPage}`);
       await page.goto(productDetailPage, { waitUntil: "networkidle" });
       const product = await this.extractProductData(page, productDetailPage);
       printProduct(product);
     }
 
-    // Close page and browser
+    // Close page, context and browser
     await page.close();
+    await context.close();
     await browser.close();
   }
 
