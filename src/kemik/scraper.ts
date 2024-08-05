@@ -46,7 +46,10 @@ export class KemikScraper {
           return newElement.href;
         });
       })
-      .then((urls) => urls);
+      .catch((error) => {
+        console.error("Error extracting product URLs: ", error);
+        return [];
+      });
   }
 
   private async extractProductData(page: Page, productUrl: string): Promise<ProductModel> {
@@ -112,6 +115,10 @@ export class KemikScraper {
         },
         productUrl: productUrl
       }
-    );
+    )
+    .catch((error) => {
+      console.error("Error extracting product data: ", error);
+      return {} as ProductModel;
+    });
   }
 }
