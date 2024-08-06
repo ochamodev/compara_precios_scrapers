@@ -1,6 +1,6 @@
 
 export function getProductSku(link: String | null) {
-    if (link === null) {
+    if (!link) {
         throw new Error("Link is null");
     }
     const tokens = link.split('-');
