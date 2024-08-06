@@ -12,12 +12,13 @@ export interface MaxConfigType {
   finalPriceClass: string;
   skuClass: string;
   productImageUrlClass: string;
+  detailsBtnClass: string;
 }
 
 export const MaxConfig: MaxConfigType = {
   parentUrl: "https://www.max.com.gt",
   productClassContainer: ".products .wrapper .grid .products-grid",
-  productCategories: ["/celulares/liberados"],
+  productCategories: ["/celulares/liberados", "/celulares/prepago"],
   noMoreItemsClass: ".message .info .empty",
   productContainerClass: ".product-item",
   productContainerLinkClass: ".product-item-link",
@@ -29,4 +30,5 @@ export const MaxConfig: MaxConfigType = {
     ".product-info-price .price-box.price-final_price .price-wrapper",
   skuClass: ".product.attribute.sku .value",
   productImageUrlClass: ".fotorama__img",
+  detailsBtnClass: "tab-label-additional-title",
 };
