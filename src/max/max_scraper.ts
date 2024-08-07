@@ -55,15 +55,9 @@ export class MaxScraper {
   }
 
   async isProductListEmpty(page: Page): Promise<boolean> {
-    const thereAreNoItemsMessage = await page.evaluate(() => {
+    return !!(await page.evaluate(() => {
       return document.querySelector(".message.info.empty");
-    });
-
-    if (thereAreNoItemsMessage) {
-      return true;
-    }
-
-    return false;
+    }));
   }
 
   private async getUrlsPerPage(page: Page): Promise<string[]> {
