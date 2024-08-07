@@ -20,7 +20,7 @@ export class KemikScraper {
     const browser = await chromium.launch({ headless: true });
     const context = await browser.newContext();
     const page = await context.newPage();
-    let productDetailURLs: string[] = [];
+    const productDetailURLs: string[] = [];
 
     // Navigate to the target URL
     await page.goto(`${config.base_url}${config.category_sub_path}${this.category}`);
