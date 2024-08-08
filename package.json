@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start:kemikscraper": "npx ts-node src/kemik/index.ts"
+    "start:kemikscraper": "npx ts-node src/kemik/index.ts",
+    "start:maxscraper": "npx ts-node src/max/index.ts"
   },
   "repository": {
     "type": "git",
