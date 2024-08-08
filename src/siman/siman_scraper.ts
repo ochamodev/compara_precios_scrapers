@@ -1,79 +1,74 @@
 
 import { chromium, firefox } from "playwright-extra";
-import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 import { config } from "./siman_config";
 import { SimanProductUrlItem } from "./model/siman_product_url_item";
 import { Page, selectors } from "playwright";
 import { ProductModel } from "../common/core";
-import { getProductSku } from "./utils/scraping_utils";
-import { printProduct } from "../common/utils/scraping_utils";
+import { getProductSku, humanLikeMouseMovement, isProductListEmpty, takeScreenshot } from "./utils/scraping_utils";
+import { logExecutionTime, printProduct } from "../common/utils/scraping_utils";
 import { ScrapingArguments } from "./model/scraping_arguments";
 export class SimanScraper {
     async start() {
+        const start = performance.now();
         const browser = await firefox.launch({
             headless: true
         });
 
         const page = await browser.newPage();
-        //let screenshotNumberItem = 1;
+        let screenshotNumberItem = 0;
         for (const category of config.productCategories) {
-            let pageNum = 1;
-            while (true) {
+            for (let pageNum = 2; ; pageNum++) {
                 const finalUrl = config.parentUrl.concat(category,`?page=${pageNum}`);
-                console.log("navigating to ", finalUrl);
+                console.log(`Navigating to ${finalUrl}`);
+
                 await page.goto(finalUrl, {
                     waitUntil: "networkidle"
                 });
-                const humanLikeMouseMovement = async (page: any, startX : any, startY : any, endX : any, endY : any) => {
-                    await page.mouse.move(startX, startY);
-                    await page.waitForTimeout(100 + Math.random() * 100); // Add some randomness in the movement
-                    await page.mouse.move(endX, endY, { steps: 5 + Math.random() * 5 });
-                };
-                
+
                 await humanLikeMouseMovement(page, 100, 100, 400, 400);
-                // await page.screenshot({path: `PageScreenshot${pageNum}.png`, fullPage: true})
+
+                //await takeScreenshot(page, `PageScreenshot${pageNum}.png`);
                 console.log("now in page ", finalUrl);
-
-                const isListEmpty = await this.isProductListEmpty(page);
-
-                if (isListEmpty) {
-                    break;
-                } else {
-                    console.log(`Finished reading products from ${category}`);
+                
+                try {
+                    await page.waitForSelector(config.productContainerClass);
+                } catch(error) {
+                    console.log("List of items is empty");
                 }
 
-                await page.waitForSelector(config.productContainerClass);
-                
+                const isListEmpty = await isProductListEmpty(page);
+
+                if (isListEmpty) {
+                    console.log(`Page ${pageNum} in ${category} is empty`);
+                    break;
+                } 
                 // running on the browser, extracting links and product items:
+                const productUrls: SimanProductUrlItem[] = await this.getProductUrls(page);
                 
-                const productUrls: SimanProductUrlItem[] = await page.$$eval(config.productContainerClass, elements => {
-                    const urls = elements.map(it => {
-                        const url = it.querySelector('a')
-                        const simanProductUrlItem: SimanProductUrlItem = {
-                            detailUrl: url ? url.href : ""
-                        };
-                        return simanProductUrlItem;
-                    });
-                    return urls;
-                });
-                
-                //console.log(productUrls);
+                console.log(productUrls);
                 
                 for (const productLink of  productUrls) {
-                    //screenshotNumberItem++;
-                    //await page.screenshot({path: `testResultItem${screenshotNumberItem}.png`, fullPage: true})
+                    screenshotNumberItem++;
+                    
                     await page.goto(productLink.detailUrl, {waitUntil: "networkidle"});
                     const productSku = getProductSku(productLink.detailUrl);
 
-                    const scrapingArguments: ScrapingArguments = this.getScrapingArguments(productLink, productSku)
+                    const scrapingArguments: ScrapingArguments = this.getScrapingArguments(productLink, productSku);
 
+                    //await takeScreenshot(page, `testRessultItem${screenshotNumberItem}.png`);
+
+                    try {
+                        await page.waitForSelector(config.showMoreBtnClass);
+                    } catch(error) {
+                        // probably an accesory so skip for now
+                        console.log("show more button not found");
+                        continue;
+                    }
+                    
                     const productModel = await page.evaluate((data) => {
-                        setTimeout(() => {
-                            // waiting to load description
-                        }, 1000);
                         const brandName = document.querySelector(data.selectors.brandNameClass)?.textContent;
                         const productImgUrl = (<HTMLImageElement>document.querySelector(`${data.selectors.imageClass}`))?.src;
-                        const productName = document.querySelector('.nombreProducto')?.textContent;
+                        const productName = document.querySelector(".nombreProducto")?.textContent;
                         const viewMoreBtn = (<HTMLButtonElement>document.querySelector(data.selectors.showMoreBtnClass));
                         if (viewMoreBtn) {
                             viewMoreBtn.click();
@@ -117,13 +112,28 @@ export class SimanScraper {
 
                         return product;
                     }, scrapingArguments);
-                    printProduct(productModel);
+                    //printProduct(productModel);
                 }
-                
-                pageNum++;
             }
         }
+        page.close();
+        browser.close();
+        const end = performance.now()
         console.log("Finished execution");
+        console.log(`Execution time: ${logExecutionTime(end - start)}`);
+    }
+
+    private async getProductUrls(page: Page): Promise<SimanProductUrlItem[]> {
+        return await page.$$eval(config.productContainerClass, elements => {
+            const urls = elements.map(it => {
+                const url = it.querySelector("a");
+                const simanProductUrlItem: SimanProductUrlItem = {
+                    detailUrl: url ? url.href : ""
+                };
+                return simanProductUrlItem;
+            });
+            return urls;
+        });
     }
 
     private getScrapingArguments(productLink: SimanProductUrlItem, productSku: string): ScrapingArguments {
@@ -141,19 +151,6 @@ export class SimanScraper {
                 sku: productSku
             }
         };
-    }
-
-    async isProductListEmpty(page: Page): Promise<boolean>{
-        const thereAreNoItems = await page.$$eval(config.noMoreItemsClass, elements => {
-            const content = elements[0].textContent
-            return content;
-        });
-
-        if (thereAreNoItems?.includes("No pudimos encontrar lo que estabas buscando")) {
-            return true;
-        }
-
-        return false;
     }
 
 }
