@@ -4,8 +4,8 @@ import { config } from "./siman_config";
 import { SimanProductUrlItem } from "./model/siman_product_url_item";
 import { Page, selectors } from "playwright";
 import { ProductModel } from "../common/core";
-import { getProductSku, humanLikeMouseMovement, isProductListEmpty, takeScreenshot } from "./utils/scraping_utils";
-import { logExecutionTime, printProduct } from "../common/utils/scraping_utils";
+import { getProductSku, isProductListEmpty, takeScreenshot } from "./utils/scraping_utils";
+import { humanLikeMouseMovement, logExecutionTime, printProduct } from "../common/utils/scraping_utils";
 import { ScrapingArguments } from "./model/scraping_arguments";
 export class SimanScraper {
     async start() {
@@ -17,7 +17,7 @@ export class SimanScraper {
         const page = await browser.newPage();
         let screenshotNumberItem = 0;
         for (const category of config.productCategories) {
-            for (let pageNum = 2; ; pageNum++) {
+            for (let pageNum = 1; ; pageNum++) {
                 const finalUrl = config.parentUrl.concat(category,`?page=${pageNum}`);
                 console.log(`Navigating to ${finalUrl}`);
 
