@@ -10,14 +10,6 @@ export function getProductSku(link: String | null) {
     return skuPart;
 }
 
-export async function humanLikeMouseMovement(page: Page, startX : any, startY : any, endX : any, endY : any) {
-    await page.mouse.move(startX, startY);
-    await page.waitForTimeout(100 + Math.random() * 100); // Add some randomness in the movement
-    await page.mouse.wheel(100 + Math.random(), 1000);
-    await page.mouse.move(endX, endY, { steps: 5 + Math.random() * 5 });
-}
-
-
 export async function isProductListEmpty(page: Page): Promise<boolean>{
     const thereAreNoItems = await page.$$eval(config.noMoreItemsClass, elements => {
         const content = elements[0].textContent
